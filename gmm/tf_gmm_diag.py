@@ -17,7 +17,7 @@ TOLERANCE = 10e-6
 # generating DATA_POINTS points from a GMM with COMPONENTS components
 #data, true_means, true_covariances, true_weights, responsibilities = tf_gmm_tools.generate_gmm_data(
 #    NUM_POINTS, COMPONENTS, DIMENSIONS, seed=10, diagonal=True)
-data=inf_train_gen("8gaussians", rng=None, batch_size=20000)
+data=inf_train_gen("checkerboard", rng=None, batch_size=20000)
 print(data)
 
 # BUILDING COMPUTATIONAL GRAPH
@@ -37,10 +37,23 @@ dim_variances = tf.reduce_sum(dim_distances, 0) / tf.cast(tf.shape(input)[0], tf
 avg_dim_variance = tf.cast(tf.reduce_sum(dim_variances) / COMPONENTS / DIMENSIONS, tf.float64)
 
 # default initial values of the variables
+
 initial_means = tf.placeholder_with_default(
-    tf.gather(input, tf.squeeze(tf.multinomial(tf.ones([1, tf.shape(input)[0]]), COMPONENTS))),
+    tf.constant([[-3,1],
+                 [-3,-3],
+                 [-1,3],
+                 [-1,-1],
+                 [3,3],
+                 [1,1],
+                 [1,-3],
+                 [3,1]],dtype='float64'),
     shape=[COMPONENTS, DIMENSIONS]
 )
+
+#initial_means = tf.placeholder_with_default(
+#    tf.gather(input, tf.squeeze(tf.multinomial(tf.ones([1, tf.shape(input)[0]]), COMPONENTS))),
+#    shape=[COMPONENTS, DIMENSIONS]
+#)
 initial_covariances = tf.placeholder_with_default(
     tf.cast(tf.ones([COMPONENTS, DIMENSIONS]), tf.float64) * avg_dim_variance,
     shape=[COMPONENTS, DIMENSIONS]
@@ -51,7 +64,16 @@ initial_weights = tf.placeholder_with_default(
 )
 
 # trainable variables: component means, covariances, and weights
-means = tf.Variable(initial_means, dtype=tf.float64)
+
+means = tf.Variable(tf.constant([[-3,1],
+                 [-3,-3],
+                 [-1,3],
+                 [-1,-1],
+                 [3,3],
+                 [1,1],
+                 [1,-3],
+                 [3,1]],dtype='float64'), dtype=tf.float64)
+#means = tf.Variable(initial_means, dtype=tf.float64)
 covariances = tf.Variable(initial_covariances, dtype=tf.float64)
 weights = tf.Variable(initial_weights, dtype=tf.float64)
 
