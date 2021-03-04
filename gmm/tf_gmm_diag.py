@@ -1,11 +1,11 @@
 import numpy as np
-import tensorflow as tf
-
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import tf_gmm_tools
-
+from toy_data import inf_train_gen
 
 DIMENSIONS = 2
-COMPONENTS = 10
+COMPONENTS = 8
 NUM_POINTS = 10000
 
 TRAINING_STEPS = 1000
@@ -15,9 +15,10 @@ TOLERANCE = 10e-6
 # PREPARING DATA
 
 # generating DATA_POINTS points from a GMM with COMPONENTS components
-data, true_means, true_covariances, true_weights, responsibilities = tf_gmm_tools.generate_gmm_data(
-    NUM_POINTS, COMPONENTS, DIMENSIONS, seed=10, diagonal=True)
-
+#data, true_means, true_covariances, true_weights, responsibilities = tf_gmm_tools.generate_gmm_data(
+#    NUM_POINTS, COMPONENTS, DIMENSIONS, seed=10, diagonal=True)
+data=inf_train_gen("8gaussians", rng=None, batch_size=20000)
+print(data)
 
 # BUILDING COMPUTATIONAL GRAPH
 
@@ -98,7 +99,7 @@ with tf.Session() as sess:
         tf.global_variables_initializer(),
         feed_dict={
             input: data,
-            initial_means: data[:10],
+            initial_means: data[:COMPONENTS],
             # initial_covariances: true_covariances,
             # initial_weights: true_weights
         }
@@ -136,6 +137,6 @@ with tf.Session() as sess:
 
 # plotting the first two dimensions of data and the obtained GMM
 tf_gmm_tools.plot_fitted_data(
-    data[:, :2], final_means[:, :2], final_covariances[:, :2],
-    true_means[:, :2], true_covariances[:, :2, :2]
-)
+    data[:, :2], final_means[:, :2], final_covariances[:, :2])#,
+    #true_means[:, :2], true_covariances[:, :2, :2]
+
