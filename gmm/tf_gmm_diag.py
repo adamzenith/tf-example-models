@@ -38,22 +38,22 @@ avg_dim_variance = tf.cast(tf.reduce_sum(dim_variances) / COMPONENTS / DIMENSION
 
 # default initial values of the variables
 
-initial_means = tf.placeholder_with_default(
-    tf.constant([[-3,1],
-                 [-3,-3],
-                 [-1,3],
-                 [-1,-1],
-                 [3,3],
-                 [1,1],
-                 [1,-3],
-                 [3,1]],dtype='float64'),
-    shape=[COMPONENTS, DIMENSIONS]
-)
-
 #initial_means = tf.placeholder_with_default(
-#    tf.gather(input, tf.squeeze(tf.multinomial(tf.ones([1, tf.shape(input)[0]]), COMPONENTS))),
+#    tf.constant([[-3,1],
+#                 [-3,-3],
+#                 [-1,3],
+#                 [-1,-1],
+#                 [3,3],
+#                 [1,1],
+#                 [1,-3],
+#                 [3,1]],dtype='float64'),
 #    shape=[COMPONENTS, DIMENSIONS]
 #)
+
+initial_means = tf.placeholder_with_default(
+    tf.gather(input, tf.squeeze(tf.multinomial(tf.ones([1, tf.shape(input)[0]]), COMPONENTS))),
+    shape=[COMPONENTS, DIMENSIONS]
+)
 initial_covariances = tf.placeholder_with_default(
     tf.cast(tf.ones([COMPONENTS, DIMENSIONS]), tf.float64) * avg_dim_variance,
     shape=[COMPONENTS, DIMENSIONS]
@@ -73,7 +73,7 @@ means = tf.Variable(tf.constant([[-3,1],
                  [1,1],
                  [1,-3],
                  [3,1]],dtype='float64'), dtype=tf.float64)
-#means = tf.Variable(initial_means, dtype=tf.float64)
+means = tf.Variable(initial_means, dtype=tf.float64)
 covariances = tf.Variable(initial_covariances, dtype=tf.float64)
 weights = tf.Variable(initial_weights, dtype=tf.float64)
 

@@ -4,6 +4,7 @@ import sklearn.datasets
 from sklearn.utils import shuffle as util_shuffle
 
 
+
 # Dataset iterator
 def inf_train_gen(data, rng=None, batch_size=200):
     if rng is None:
